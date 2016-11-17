@@ -124,7 +124,8 @@ let rec eval : exp -> env -> mem -> value * mem
                                            )
                                            | _ -> raise UndefSemantics)
   | SET (arg1, arg2) -> let (v1, m1) = (eval arg2 env mem) in
-                                       
+                                       let new_mem = (extend_mem (apply_env env arg1, v1) m1) in
+                                       (v1, new_mem)
                                        
 
   | _ -> raise UndefSemantics
