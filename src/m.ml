@@ -71,11 +71,6 @@ let value2bool v =
   | Bool b -> b
   | _ -> raise UndefSemantics
 
-let getEnv c =
-  match c with
-  | Closure (x, body, e) -> e
-  | _ -> raise UndefSemantics
-
 (* TODO: Implement this function *)
 let rec eval : exp -> env -> mem -> value * mem
 =fun exp env mem -> 
@@ -106,7 +101,6 @@ let rec eval : exp -> env -> mem -> value * mem
                                           let (new_env, new_mem) = ((extend_env (x, l) env), (extend_mem (l, v1) mem)) in
                                           (eval arg2 new_env new_mem)
   | PROC (x, body) -> (Closure (x, body, env), mem)                                        
-(*  | CALL (arg1, arg2) -> let (Closure (x, body, create_env), m1) = (eval arg1 env mem) in (Int 0, mem) *)
   | CALL (arg1, arg2) -> let (v1, m1) = (eval arg1 env mem) in
                                         (match v1 with
                                         | Closure (x, body, e) -> (
@@ -115,8 +109,23 @@ let rec eval : exp -> env -> mem -> value * mem
                                           let (new_env, new_mem) = ((extend_env (x, l) e), (extend_mem (l, v2) m2)) in
                                           (eval body new_env new_mem)
                                         )
+                                        | RecClosure (f, x, body, e) -> (
+                                          let (v2, m2) = (* Implement Recursive CALL *)
+                                        )
                                         | _ -> raise UndefSemantics)
-(*여기서 위에 정의한 getEnv를 사용해서, 패턴 매칭 오류메시지 확인해보고, 똑같으면 그냥 위에 v2를 Closure 형태로 받아라*)
+  | CALLREF (arg1, arg2) -> let (v1, m1) = (eval arg1 env mem) in
+                                           (match v1 with
+                                           | Closure (x, body, e) -> (
+                                             let new_env = (extend_env (x, apply_env env arg2) e) in
+                                             (eval body new_env m1)
+                                           )
+                                           | RecClosure (f, x, body, e) -> (
+                                             let (v2, m2) = (* Implement Recursive CALL *)
+                                           )
+                                           | _ -> raise UndefSemantics)
+  | SET (arg1, arg2) -> let (v1, m1) = (eval arg2 env mem) in
+                                       
+                                       
 
   | _ -> raise UndefSemantics
 
