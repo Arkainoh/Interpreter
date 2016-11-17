@@ -129,6 +129,7 @@ let rec eval : exp -> env -> mem -> value * mem
                                        
   | SEQ (arg1, arg2) -> let (v1, m1) = (eval arg1 env mem) in
                                        (eval arg2 env m1)
+  | BEGIN arg -> (eval arg env mem)
   | _ -> raise UndefSemantics
 
 let run : program -> value
