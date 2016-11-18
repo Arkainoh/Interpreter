@@ -101,10 +101,9 @@ let rec eval : exp -> env -> mem -> value * mem
                                           let (new_env, new_mem) = ((extend_env (x, l) env), (extend_mem (l, v1) mem)) in
                                           (eval arg2 new_env new_mem)
   | LETREC (f, x, arg1, arg2) -> let l = new_location() in
-                                         let (new_env, new_mem) = ((extend_env (f, l) env), (extend_mem (l, RecClosure (f, x, arg1, env) mem))) in
+                                         let (new_env, new_mem) =
+                                           ((extend_env (f, l) env), (extend_mem (l, (RecClosure (f, x, arg1, env))) mem)) in
                                          (eval arg2 new_env new_mem)
-                                                          
-
   | PROC (x, body) -> (Closure (x, body, env), mem)                                        
   | CALL (arg1, arg2) -> let (v1, m1) = (eval arg1 env mem) in
                                         (match v1 with
@@ -115,7 +114,13 @@ let rec eval : exp -> env -> mem -> value * mem
                                           (eval body new_env new_mem)
                                         )
                                         | RecClosure (f, x, body, e) -> (
-                                          let (v2, m2) = (* Implement Recursive CALL *)
+                                          let (v2, m2) = (eval arg2 env m1) in
+                                          let l1 = new_location() in
+                                          let l2 = new_location() in
+                                          let (new_env, new_mem) = ((extend_env (x, l1) e), (extend_mem (l1, v2) m2)) in
+                                          let (new_env, new_mem) =
+                                            ((extend_env (f, l2) new_env), (extend_mem (l2, RecClosure (f, x, body, e)) new_mem)) in
+                                          (eval body new_env new_mem)
                                         )
                                         | _ -> raise UndefSemantics)
   | CALLREF (arg1, arg2) -> let (v1, m1) = (eval arg1 env mem) in
