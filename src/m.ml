@@ -98,7 +98,7 @@ let rec eval : exp -> env -> mem -> value * mem
                                             else (eval arg3 env m1))
   | LET (x, arg1, arg2) -> let (v1, m1) = (eval arg1 env mem) in
                                           let l = new_location() in
-                                          let (new_env, new_mem) = ((extend_env (x, l) env), (extend_mem (l, v1) mem)) in
+                                          let (new_env, new_mem) = ((extend_env (x, l) env), (extend_mem (l, v1) m1)) in
                                           (eval arg2 new_env new_mem)
   | LETREC (f, x, arg1, arg2) -> let l = new_location() in
                                          let (new_env, new_mem) =
