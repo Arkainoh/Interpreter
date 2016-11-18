@@ -91,7 +91,7 @@ let rec eval : exp -> env -> mem -> value * mem
                                        (Int (value2int v1 / value2int v2),m2)
   | ISZERO arg -> let (v1, m1) = (eval arg env mem) in
                                  (if (value2int v1) = 0 then (Bool true, m1) else (Bool false, m1))
-  (*| READ *)
+  | READ -> (Int (read_int()), mem)
   | IF (arg1, arg2, arg3) -> let (v1, m1) = (eval arg1 env mem) in
                                             (if (value2bool v1)
                                             then (eval arg2 env m1)
