@@ -118,9 +118,9 @@ let rec eval : exp -> env -> mem -> value * mem
                                           let l1 = new_location() in
                                           let l2 = new_location() in
                                           let (new_env, new_mem) = ((extend_env (x, l1) e), (extend_mem (l1, v2) m2)) in
-                                          let (new_env, new_mem) =
+                                          let (new_env2, new_mem2) =
                                             ((extend_env (f, l2) new_env), (extend_mem (l2, RecClosure (f, x, body, e)) new_mem)) in
-                                          (eval body new_env new_mem)
+                                          (eval body new_env2 new_mem2)
                                         )
                                         | _ -> raise UndefSemantics)
   | CALLREF (arg1, arg2) -> let (v1, m1) = (eval arg1 env mem) in
@@ -132,9 +132,9 @@ let rec eval : exp -> env -> mem -> value * mem
                                            | RecClosure (f, x, body, e) -> (
                                              let l = new_location() in
                                              let new_env = (extend_env (x, apply_env env arg2) e) in
-                                             let new_env = (extend_env (f, l) new_env) in
+                                             let new_env2 = (extend_env (f, l) new_env) in
                                              let new_mem = (extend_mem (l, RecClosure (f, x, body, e)) m1) in
-                                             (eval body new_env new_mem)
+                                             (eval body new_env2 new_mem)
                                            )
                                            | _ -> raise UndefSemantics)
   | SET (arg1, arg2) -> let (v1, m1) = (eval arg2 env mem) in
